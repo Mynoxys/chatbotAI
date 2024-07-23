@@ -1,0 +1,50 @@
+{
+    "candidates": [
+        {
+            "content": {
+                "role": "model",
+                "parts": [
+                    {
+                        "text": "Je suis d\u00e9sol\u00e9, mais je n'ai pas de m\u00e9moire des conversations pr\u00e9c\u00e9dentes. Chaque nouvelle interaction est trait\u00e9e comme une nouvelle conversation. \n\nPeux-tu me rappeler ta derni\u00e8re question s'il te pla\u00eet ? Je serai heureux de t'aider. \ud83d\ude0a \n"
+                    }
+                ]
+            },
+            "finish_reason": "STOP",
+            "safety_ratings": [
+                {
+                    "category": "HARM_CATEGORY_HATE_SPEECH",
+                    "probability": "NEGLIGIBLE",
+                    "probability_score": 0.043528143,
+                    "severity": "HARM_SEVERITY_NEGLIGIBLE",
+                    "severity_score": 0.02931223
+                },
+                {
+                    "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                    "probability": "NEGLIGIBLE",
+                    "probability_score": 0.021165619,
+                    "severity": "HARM_SEVERITY_NEGLIGIBLE",
+                    "severity_score": 0.017576883
+                },
+                {
+                    "category": "HARM_CATEGORY_HARASSMENT",
+                    "probability": "NEGLIGIBLE",
+                    "probability_score": 0.13637818,
+                    "severity": "HARM_SEVERITY_NEGLIGIBLE",
+                    "severity_score": 0.09451043
+                },
+                {
+                    "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                    "probability": "NEGLIGIBLE",
+                    "probability_score": 0.055823144,
+                    "severity": "HARM_SEVERITY_NEGLIGIBLE",
+                    "severity_score": 0.066085376
+                }
+            ]
+        }
+    ],
+    "usage_metadata": {
+        "prompt_token_count": 253,
+        "candidates_token_count": 56,
+        "total_token_count": 309
+    }
+}
