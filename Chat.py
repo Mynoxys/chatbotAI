@@ -1,5 +1,7 @@
 import os
 from flask import Flask, request, jsonify
+
+# Import other necessary modules
 import base64
 import vertexai
 from vertexai.generative_models import GenerativeModel, Part
@@ -46,6 +48,10 @@ chat = model.start_chat(response_validation=False)  # Disable response validatio
 
 app = Flask(__name__)
 
+@app.route('/')
+def home():
+    return "Welcome to the Student Planner App!"
+
 @app.route('/api/chat', methods=['POST'])
 def chat_endpoint():
     user_message = request.json.get('message')
@@ -55,4 +61,3 @@ def chat_endpoint():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=True, host='0.0.0.0', port=port)
-
