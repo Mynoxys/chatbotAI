@@ -5,6 +5,8 @@ import vertexai
 from vertexai.generative_models import GenerativeModel, Part
 import vertexai.preview.generative_models as generative_models
 import json
+import logging
+from logging import FileHandler, WARNING
 
 # Define the texts for system instructions
 textsi_1 = """You are an academic assistant designed to help students with their studies. Your primary role is to provide clear, accurate, and helpful information on a wide range of academic topics."""
@@ -62,13 +64,19 @@ app = Flask(__name__)
 def home():
     return "Welcome to the Jarvis AI Back-end!"
 
+file_handler = FileHandler('errorlog.txt')
+file_handler.setLevel(WARNING)
+app.logger.addHandler(file_handler)
+
+
 @app.route('/api/chat', methods=['POST'])
 def chat_endpoint():
     user_message = request.json.get('message')
-    ai_response = multiturn_generate_content(chat, user_message)  # Call your Python function
-    relevant_part = extract_relevant_part(ai_response)  # Extract relevant part
+    app.logger.warning(f'Received message: {user_message}')
+    ai_response = multiturn_generate_content(chat, user_message)
+    relevant_part = extract_relevant_part(ai_response)
     return jsonify({'reply': relevant_part})
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(debug=False, host='0.0.0.0', port=port)
