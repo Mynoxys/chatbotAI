@@ -1,6 +1,7 @@
 import os
 import base64
 
+
 credentials_base64 = os.environ.get("GOOGLE_CREDENTIALS_BASE64")
 if credentials_base64 is None:
     raise ValueError("GOOGLE_CREDENTIALS_BASE64 environment variable is not set")
