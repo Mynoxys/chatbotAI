@@ -1,9 +1,5 @@
 import os
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/c/Users/ASC_Student/AppData/Roaming/gcloud/google-credentials.json"
-
-
-
-
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/app/google-credentials.json"
 from flask import Flask, request, jsonify
 import base64
 import vertexai
@@ -83,6 +79,6 @@ def chat_endpoint():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(debug=False, host='0.0.0.0', port=port)
+    app.run(debug=True, host='0.0.0.0', port=port)
 
 
