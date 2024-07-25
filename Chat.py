@@ -1,7 +1,15 @@
 import os
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/app/google-credentials.json"
-from flask import Flask, request, jsonify
 import base64
+
+credentials_base64 = os.environ.get("GOOGLE_CREDENTIALS_BASE64")
+credentials_path = "/app/google-credentials.json"
+
+with open(credentials_path, "wb") as f:
+    f.write(base64.b64decode(credentials_base64))
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+
+from flask import Flask, request, jsonify
 import vertexai
 from vertexai.generative_models import GenerativeModel, Part
 import vertexai.preview.generative_models as generative_models
@@ -80,5 +88,3 @@ def chat_endpoint():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=True, host='0.0.0.0', port=port)
-
-
