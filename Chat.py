@@ -1,5 +1,8 @@
 import os
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:/Users/ASC_Student/AppData/Roaming/gcloud/google-credentials.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/c/Users/ASC_Student/AppData/Roaming/gcloud/google-credentials.json"
+
+
+
 
 from flask import Flask, request, jsonify
 import base64
