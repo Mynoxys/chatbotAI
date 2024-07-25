@@ -1,4 +1,6 @@
 import os
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:/Users/ASC_Student/AppData/Roaming/gcloud/application_default_credentials.json"
+
 from flask import Flask, request, jsonify
 import base64
 import vertexai
@@ -68,7 +70,6 @@ file_handler = FileHandler('errorlog.txt')
 file_handler.setLevel(WARNING)
 app.logger.addHandler(file_handler)
 
-
 @app.route('/api/chat', methods=['POST'])
 def chat_endpoint():
     user_message = request.json.get('message')
@@ -80,3 +81,5 @@ def chat_endpoint():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
+
+
