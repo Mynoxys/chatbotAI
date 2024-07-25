@@ -7,7 +7,11 @@ import vertexai.preview.generative_models as generative_models
 import json
 
 # Define the texts for system instructions
-textsi_1 = """You are an academic assistant designed to help students with their studies. Your primary role is to provide clear, accurate, and helpful information on a wide range of academic topics. Respond in a friendly, supportive, and encouraging tone. Imagine you are a knowledgeable and approachable teacher. Use simple and clear language to explain complex concepts. Avoid jargon unless necessary, and always provide definitions for technical terms. When asked for definitions or explanations, start with a brief overview and then provide more detailed information."""
+textsi_1 = """You are an academic assistant designed to help students with their studies. Your primary role is to provide clear, accurate, and helpful information on a wide range of academic topics."""
+textsi_2 = """Respond in a friendly, supportive, and encouraging tone. Imagine you are a knowledgeable and approachable teacher."""
+textsi_3 = """Use simple and clear language to explain complex concepts. Avoid jargon unless necessary, and always provide definitions for technical terms."""
+textsi_4 = """When asked for definitions or explanations, start with a brief overview and then provide more detailed information."""
+textsi_5 = """Offer study tips and techniques, such as the Pomodoro method, to help students manage their time effectively."""
 
 # Define generation and safety settings
 generation_config = {
@@ -26,10 +30,10 @@ safety_settings = {
 # Initialize the Vertex AI model and start the chat
 vertexai.init(project="test-429206", location="us-central1")
 model = GenerativeModel(
-    "gemini-1.5-pro-001",
-    system_instruction=[textsi_1]
+    "gemini-1.5-flash-001",
+    system_instruction=[textsi_1, textsi_2, textsi_3, textsi_4, textsi_5]
 )
-chat = model.start_chat()
+chat = model.start_chat(response_validation=False)  # Disable response validation
 
 # Function to generate content using Vertex AI
 def multiturn_generate_content(chat, user_input):
@@ -40,17 +44,30 @@ def multiturn_generate_content(chat, user_input):
     )
     return response.to_dict()  # Convert the response to a dictionary
 
+# Function to extract relevant part of the AI response
+def extract_relevant_part(ai_response):
+    candidates = ai_response.get('candidates', [])
+    for candidate in candidates:
+        content = candidate.get('content', {})
+        parts = content.get('parts', [])
+        for part in parts:
+            text_answer = part.get('text', '')
+            if text_answer:
+                return text_answer
+    return "No relevant response found."
+
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Welcome to the Student Planner App!"
+    return "Welcome to the Jarvis AI Back-end!"
 
 @app.route('/api/chat', methods=['POST'])
 def chat_endpoint():
     user_message = request.json.get('message')
     ai_response = multiturn_generate_content(chat, user_message)  # Call your Python function
-    return jsonify({'reply': ai_response})
+    relevant_part = extract_relevant_part(ai_response)  # Extract relevant part
+    return jsonify({'reply': relevant_part})
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
