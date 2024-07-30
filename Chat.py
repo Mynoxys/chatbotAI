@@ -21,7 +21,7 @@ with open(credentials_path, "wb") as f:
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
 
 # Define the refined system instruction
-system_instruction = """You are an academic assistant designed to help students with their studies. Your primary role is to provide clear, accurate, and helpful explanation on a wide range of academic topics. Respond in a friendly, supportive, and encouraging tone. Imagine you are a knowledgeable and approachable teacher. Use simple and clear language to explain complex concepts. Avoid jargon unless necessary, and always provide definitions for technical terms. When asked for definitions or explanations, start with a brief overview and then provide more detailed information. Always encourage the student to ask questions and to seek more knowledge."""
+system_instruction = """Help students with their studies by providing clear, accurate, and supportive information. Use simple language, give structured explanations, and offer practical study tips. Encourage and motivate students."""
 
 # Define generation and safety settings
 generation_config = {
@@ -54,6 +54,20 @@ def multiturn_generate_content(chat, user_input):
     )
     return response.to_dict()  # Convert the response to a dictionary
 
+# Function to clean up the AI response
+def clean_ai_response(ai_response):
+    # Replace special characters with their readable equivalents
+    cleaned_response = ai_response.replace('\\u2013', '–')  # Replace en dash
+    # Add more replacements as needed
+
+    # Remove any unwanted characters (e.g., non-printable characters)
+    cleaned_response = ''.join(char for char in cleaned_response if 32 <= ord(char) <= 126)
+
+    # Trim extra whitespace
+    cleaned_response = cleaned_response.strip()
+
+    return cleaned_response
+
 # Function to extract relevant part of the AI response
 def extract_relevant_part(ai_response):
     candidates = ai_response.get('candidates', [])
@@ -63,7 +77,7 @@ def extract_relevant_part(ai_response):
         for part in parts:
             text_answer = part.get('text', '')
             if text_answer:
-                return text_answer
+                return clean_ai_response(text_answer)
     return "No relevant response found."
 
 app = Flask(__name__)
@@ -87,4 +101,5 @@ def chat_endpoint():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=True, host='0.0.0.0', port=port)
+
 
