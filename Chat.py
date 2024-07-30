@@ -1,13 +1,13 @@
 import os
 import base64
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import vertexai
 from vertexai.generative_models import GenerativeModel, Part
 import vertexai.preview.generative_models as generative_models
 import json
 import logging
 from logging import FileHandler, WARNING
-import re
 
 # Decode base64 credentials and set environment variable
 credentials_base64 = os.environ.get("GOOGLE_CREDENTIALS_BASE64")
@@ -55,15 +55,11 @@ def multiturn_generate_content(chat, user_input):
     )
     return response.to_dict()  # Convert the response to a dictionary
 
-# Function to clean up and format the AI response
-def clean_and_format_ai_response(ai_response):
+# Function to clean up the AI response
+def clean_ai_response(ai_response):
     # Replace special characters with their readable equivalents
     cleaned_response = ai_response.replace('\\u2013', '–')  # Replace en dash
-
-    # Convert markdown-like formatting to HTML
-    cleaned_response = re.sub(r'\*(.*?)\*', r'<b>\1</b>', cleaned_response)  # Bold
-    cleaned_response = re.sub(r'_(.*?)_', r'<i>\1</i>', cleaned_response)  # Italics
-    cleaned_response = cleaned_response.replace('\n', '<br>')  # New lines
+    # Add more replacements as needed
 
     # Remove any unwanted characters (e.g., non-printable characters)
     cleaned_response = ''.join(char for char in cleaned_response if 32 <= ord(char) <= 126)
@@ -82,10 +78,11 @@ def extract_relevant_part(ai_response):
         for part in parts:
             text_answer = part.get('text', '')
             if text_answer:
-                return clean_and_format_ai_response(text_answer)
+                return clean_ai_response(text_answer)
     return "No relevant response found."
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 @app.route('/')
 def home():
@@ -106,5 +103,4 @@ def chat_endpoint():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=True, host='0.0.0.0', port=port)
-
 
