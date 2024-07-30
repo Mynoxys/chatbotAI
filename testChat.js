@@ -37,10 +37,5 @@ function extractPlainText(response) {
 }
 
 // Manually input the user message here
-const userInput = 'What is a cell';
+const userInput = 'Hi ai';
 sendMessage(userInput);
-
-
-
-
-
