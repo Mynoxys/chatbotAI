@@ -1,14 +1,7 @@
 import os
 import base64
-from flask import Flask, request, jsonify
-import vertexai
-from vertexai.generative_models import GenerativeModel, Part
-import vertexai.preview.generative_models as generative_models
-import json
-import logging
-from logging import FileHandler, WARNING
 
-# Decode base64 credentials and set environment variable
+
 credentials_base64 = os.environ.get("GOOGLE_CREDENTIALS_BASE64")
 if credentials_base64 is None:
     raise ValueError("GOOGLE_CREDENTIALS_BASE64 environment variable is not set")
@@ -19,6 +12,15 @@ with open(credentials_path, "wb") as f:
     f.write(base64.b64decode(credentials_base64))
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+
+
+from flask import Flask, request, jsonify
+import vertexai
+from vertexai.generative_models import GenerativeModel, Part
+import vertexai.preview.generative_models as generative_models
+import json
+import logging
+from logging import FileHandler, WARNING
 
 # Define the texts for system instructions
 textsi_1 = """You are an academic assistant designed to help students with their studies. Your primary role is to provide clear, accurate, and helpful information on a wide range of academic topics."""
@@ -58,6 +60,18 @@ def multiturn_generate_content(chat, user_input):
     )
     return response.to_dict()  # Convert the response to a dictionary
 
+# Function to extract relevant part of the AI response
+def extract_relevant_part(ai_response):
+    candidates = ai_response.get('candidates', [])
+    for candidate in candidates:
+        content = candidate.get('content', {})
+        parts = content.get('parts', [])
+        for part in parts:
+            text_answer = part.get('text', '')
+            if text_answer:
+                return text_answer
+    return "No relevant response found."
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -73,7 +87,8 @@ def chat_endpoint():
     user_message = request.json.get('message')
     app.logger.warning(f'Received message: {user_message}')
     ai_response = multiturn_generate_content(chat, user_message)
-    return jsonify({'reply': ai_response})
+    relevant_part = extract_relevant_part(ai_response)
+    return jsonify({'reply': relevant_part})
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
